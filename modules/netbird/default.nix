@@ -192,7 +192,7 @@ in {
 
           AUTH_AUDIENCE = "netbird-dashboard";
           AUTH_CLIENT_ID = "netbird-dashboard";
-          AUTH_CLIENT_SECRET = ""
+          AUTH_CLIENT_SECRET = "";
           AUTH_AUTHORITY = "${cfg.containers.${serverName}.traefik.serviceUrl}/oauth2";
           USE_AUTH0 = false;
           AUTH_SUPPORTED_SCOPES = "openid profile email groups offline_access";
