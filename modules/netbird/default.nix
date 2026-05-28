@@ -94,6 +94,7 @@ in {
         scopes = ["openid" "profile" "email" "groups" "offline_access"];
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
+          "${cfg.containers.${dashboardName}.traefik.serviceUrl}/oauth/callback"
           "${cfg.containers.${dashboardName}.traefik.serviceUrl}/nb-auth"
           "${cfg.containers.${dashboardName}.traefik.serviceUrl}/peers"
           "${cfg.containers.${dashboardName}.traefik.serviceUrl}/add-peers"
