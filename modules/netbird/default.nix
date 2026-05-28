@@ -184,29 +184,22 @@ in {
 
     services.podman.containers = {
       ${dashboardName} = {
-        image = "docker.io/netbirdio/dashboard:v2.33.0";
+        image = "docker.io/netbirdio/dashboard:v2.38.1";
 
         extraEnv = {
           NETBIRD_MGMT_API_ENDPOINT = cfg.containers.${serverName}.traefik.serviceUrl;
           NETBIRD_MGMT_GRPC_API_ENDPOINT = cfg.containers.${serverName}.traefik.serviceUrl;
 
-          AUTH_AUDIENCE =
-            if cfg.oidc.enable
-            then stackName
-            else "netbird-dashboard";
-          AUTH_CLIENT_ID =
-            if cfg.oidc.enable
-            then stackName
-            else "netbird-dashboard";
-          AUTH_CLIENT_SECRET = lib.mkIf cfg.oidc.enable {fromFile = cfg.oidc.clientSecretFile;};
-          AUTH_AUTHORITY =
-            if cfg.oidc.enable
-            then config.nps.containers.authelia.traefik.serviceUrl
-            else "${cfg.containers.${serverName}.traefik.serviceUrl}/oauth2";
+          AUTH_AUDIENCE = "netbird-dashboard";
+          AUTH_CLIENT_ID = "netbird-dashboard";
+          AUTH_CLIENT_SECRET = ""
+          AUTH_AUTHORITY = "${cfg.containers.${serverName}.traefik.serviceUrl}/oauth2";
           USE_AUTH0 = false;
-          AUTH_SUPPORTED_SCOPES.fromFile = pkgs.writeText "scopes" "openid profile email groups offline_access";
+          AUTH_SUPPORTED_SCOPES = "openid profile email groups offline_access";
           AUTH_REDIRECT_URI = "/nb-auth";
           AUTH_SILENT_REDIRECT_URI = "/nb-silent-auth";
+          LETSENCRYPT_DOMAIN = "none";
+          NGINX_SSL_PORT = "443";
         };
 
         stack = stackName;
@@ -233,7 +226,7 @@ in {
       };
 
       ${serverName} = {
-        image = "ghcr.io/netbirdio/netbird-server:0.66.2";
+        image = "ghcr.io/netbirdio/netbird-server:0.71.4";
         ports = ["3478:3478/udp"];
         volumeMap.data = "${storage}/data:/var/lib/netbird";
 
