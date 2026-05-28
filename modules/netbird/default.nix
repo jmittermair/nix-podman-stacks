@@ -83,14 +83,13 @@ in {
     nps.stacks.authelia = lib.mkIf cfg.oidc.enable {
       oidc.clients.${stackName} = {
         client_name = displayName;
+        client_id = "${stackName}";
         client_secret = cfg.oidc.clientSecretHash;
         claims_policy = "${stackName}";
         public = false;
         authorization_policy = stackName;
-        require_pkce = true;
-        pkce_challenge_method = "S256";
-        consent_mode = "implicit";
-        audience = [stackName];
+        require_pkce = false;
+        pkce_challenge_method = "";
         scopes = ["openid" "profile" "email" "groups" "offline_access"];
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
@@ -101,7 +100,6 @@ in {
           "http://localhost"
           "http://localhost:5300"
         ];
-        token_endpoint_auth_method = "client_secret_post";
       };
 
       # No real RBAC control based on custom claims / groups yet. Restrict user-access on Authelia level for now
