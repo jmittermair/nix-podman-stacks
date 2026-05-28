@@ -84,6 +84,7 @@ in {
       oidc.clients.${stackName} = {
         client_name = displayName;
         client_secret = cfg.oidc.clientSecretHash;
+        claims_policy = "${stackName}";
         public = false;
         authorization_policy = stackName;
         require_pkce = true;
@@ -111,6 +112,19 @@ in {
             policy = config.nps.stacks.authelia.defaultAllowPolicy;
             subject = "group:${cfg.oidc.userGroup}";
           }
+        ];
+      };
+
+      # Netbird requires a non-standard JWT mapping that Authelia does not provide
+      # See <https://github.com/netbirdio/netbird/issues/5143>
+      # It appears to be impossible to automatically claim the admin user if the email matches in both Netbird and Authelia.
+      # You must manually either set your OIDC user as an Admin or transfer Ownership after the login and approval of the user creation.
+      settings.identity_providers.oidc.claims_policies.${stackName} = {
+        id_token = [
+          "name"
+          "email"
+          "preferred_username"
+          "groups"
         ];
       };
 
